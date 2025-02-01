@@ -67,16 +67,16 @@ class WordFinderConstraint:
 
         # apply the must NOT have constraint 2nd because this set will grow faster
         # and thus reduce the list of words faster
-        words = words[np.isin(words, self.must_not_have, invert=True).all(axis=1)]
+        words = words[np.isin(words, self.must_not_have, assume_unique=True, invert=True).all(axis=1)]
 
         # apply the must have constraint last
-        if len(self.must_have) > 0:
-            words = words[np.isin(words, self.must_have).any(axis=1)]
+        for i in range(self.must_have.shape[0]):
+            words = words[np.isin(words, self.must_have[i], assume_unique=True).any(axis=1)]
 
         # apply the possible letters per position constraint
         for i in range(self.num_letters):
             if len(self.forbidden_letters_per_position[i]) > 0:
-                words = words[np.isin(words[:, i], self.forbidden_letters_per_position[i], invert=True)]
+                words = words[np.isin(words[:, i], self.forbidden_letters_per_position[i], assume_unique=True,  invert=True)]
 
         return words
 
